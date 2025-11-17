@@ -1,9 +1,9 @@
 
 export const formatPrice = (value) => {
     // Si el valor es null, undefined o NaN (excepto 0), devuelve "$0,00"
-    if (!value && value !== 0) return "$0,00";
-    return Number(value).toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
-};
+    if (!value && value !== 0) return "$0,00"
+    return Number(value).toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })
+}
 
 // colorMap.js
 export const colorMap = {
@@ -20,7 +20,7 @@ export const colorMap = {
     mint: "#98FF98",
     grafito: "#383838",
     lila: "#C8A2C8"
-};
+}
 
 export const getColorCode = (color) => {
     if(!color) return "#ccc"

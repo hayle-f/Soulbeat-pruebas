@@ -1,13 +1,16 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { useEffect, useState } from "react";
-import { useAurisContext } from "../../context/AurisContext";
-import { Bars } from "react-loader-spinner";
+import { useEffect, useState } from "react"
+import { useAurisContext } from "../../context/AurisContext"
+import { Bars } from "react-loader-spinner"
 import ProductVariants from "./ProductVariants"
+import { useAdminProductsContext } from "../../context/AdminProductsContext"
 
 
-const AdminProductForm = ({ onSave, onCancel }) => {
+const AdminProductForm = () => {
     const navigate = useNavigate()
     const { dataAuris, isLoading } = useAurisContext()
+    const { updateProduct, createProduct, deleteProduct } = useAdminProductsContext()
+    
     const { id } = useParams();
     const [form, setForm] = useState(null)
 
@@ -66,6 +69,24 @@ const AdminProductForm = ({ onSave, onCancel }) => {
             especificaciones: { ...form.especificaciones, [key]: value }
         });
         console.log("Cambio en especificación:", key);
+    }
+
+    const cleanAndNavigate = (productId) => {
+        sessionStorage.removeItem("product-" + productId);
+        navigate("/admin/products");
+    }
+    
+    const handleCancel = () => cleanAndNavigate(form.id);
+    
+    const handleDelete = async () => {
+        await deleteProduct(id);
+        cleanAndNavigate(id);
+    }
+    const handleSave = async (e) => {
+        e.preventDefault();
+        if(id) await updateProduct(id, form);
+        else await createProduct(form);
+        cleanAndNavigate(form.id);
     }
 
     const labels = [
@@ -140,12 +161,13 @@ const AdminProductForm = ({ onSave, onCancel }) => {
             <div className="flex gap-2 justify-around mt-6">
                 <button  
                     className="text-gray-600 dark:text-[#c9c9c9] text-[0.9rem] px-1.5 py-1 font-medium bg-[#fdfdfd] dark:bg-[#363636] border border-gray-600 dark:border-[#c9c9c9] rounded-md transition-all ease-linear duration-200 hover:text-[0.95rem] hover:[box-shadow:2px_2px_10px_#00000048] hover:cursor-pointer" 
-                    onClick={() => navigate("/admin/products")}
+                    onClick={handleCancel}
                 >
                     Cancelar
                 </button>
                 <button type="submit" 
                     className="text-gray-600 dark:text-[#c9c9c9] text-[0.9rem] px-1.5 py-1 font-medium bg-[#fdfdfd] dark:bg-[#363636] border border-gray-600 dark:border-[#c9c9c9] rounded-md transition-all ease-linear duration-200 hover:text-[0.95rem] hover:[box-shadow:2px_2px_10px_#00000048] hover:cursor-pointer"
+                    onClick={handleSave}
                 >
                     {id ? 'Guardar cambios' : 'Crear'}
                 </button>
@@ -153,8 +175,9 @@ const AdminProductForm = ({ onSave, onCancel }) => {
         </form>
 
         {id && 
-            <button type="submit" 
+            <button type="button" 
             className=" mt-3 text-red-600 dark:text-red-500 text-[0.9rem]  font-medium bg-[#fdfdfd] dark:bg-[#363636] p-2 border border-red-600 dark:border-red-500 rounded-md transition-all ease-linear duration-200 hover:text-[0.95rem] hover:[box-shadow:2px_2px_10px_#00000048] hover:cursor-pointer"
+            onClick={handleDelete}
             >
                 Eliminar producto completo
             </button>

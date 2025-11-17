@@ -22,7 +22,7 @@ export const AurisProvider = ({children}) => {
 
             } catch (error) {
                 // Mostrar toast de error si falla la carga
-                toast.error(error.message || "Error al cargar los auriculares Intenta más tarde.")
+                toast.error(`Error al cargar los auriculares Intenta más tarde: ${error.message}`)
             } finally {
                 setIsLoading(false)
             }

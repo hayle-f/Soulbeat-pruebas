@@ -1,12 +1,4 @@
 
-export const addVariant = (items) => {
-    
-    const newVariant = { id: "new-" + (items.length + 1), color: "", stock: 0, imagen: "" }
-    items = [...items, newVariant]
-    return items
-    
-}
-
 
 export const removeVariant = (items, id) => {
     if(items.length > 1) {
@@ -27,3 +19,4 @@ export const updateVariant = (items, id, newItem) => {
     )
     
 }
+
