@@ -24,8 +24,9 @@ const AdminProductForm = () => {
             } else if (item) {
                 setForm(item) // Editar producto existente
             } else {
+                const newProductId = crypto.randomUUID()
                 setForm({ // Nuevo producto
-                    id: crypto.randomUUID(),
+                    id: newProductId,
                     nombre: "",
                     tipo: "",
                     precio: 0,
@@ -36,11 +37,15 @@ const AdminProductForm = () => {
                         microfono: "",
                         duracionBateria: ""
                     },
-                    items: [{ id: "", color: "", stock: 0, imagen: "" }]
+                    items: []
                 })
             }
         }
+
+        
     }, [isLoading, dataAuris, id])
+
+    console.log("Producto:", form)
 
     if (isLoading || !form) return (
         <div className="w-full flex justify-center items-center py-20">
@@ -68,7 +73,7 @@ const AdminProductForm = () => {
         handleFormUpdate({
             especificaciones: { ...form.especificaciones, [key]: value }
         });
-        console.log("Cambio en especificación:", key);
+        console.log("Cambio en:", key, value);
     }
 
     const cleanAndNavigate = (productId) => {
@@ -154,6 +159,7 @@ const AdminProductForm = () => {
             {/* Variantes */}
             <ProductVariants 
                 items={form.items}
+                formID={form.id}
                 onChange={(newItems) => handleFormUpdate({ items: newItems })}
             />
 

@@ -18,6 +18,8 @@ export const CustomToast = () => {
             pauseOnHover={false}
             theme={theme === "dark" ? "dark" : "light"}
             transition={Slide}
+
+            className="text-sm max-w-[200px] z-50 mt-12"
         />
     )
 }

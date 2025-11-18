@@ -12,7 +12,9 @@ const ProductVariants = ({ items, onChange, productId }) => {
     }
 
     const handleSaveNewVariant = () => {
-        if (!newVariant.color) return alert("La variante necesita un color")
+        if (!newVariant.color || newVariant.stock === "" || !newVariant.imagen) {
+            return toast.error("Completa color, stock e imagen antes de guardar");
+        }
         onChange([...items, { ...newVariant, id: productId + "-" + newVariant.color.toLowerCase() }])
         setNewVariant(null)
     }
@@ -82,9 +84,20 @@ const ProductVariants = ({ items, onChange, productId }) => {
                     </div>
 
                     <i
-                        className="bi bi-trash text-red-600 text-xl cursor-pointer hover:scale-110 transition-transform"
-                        onClick={() => onChange(removeVariant(items, variant.id))}
+                        className={`
+                            bi bi-trash text-xl transition-transform
+                            ${
+                                items.length <= 1
+                                    ? "text-gray-400 cursor-not-allowed opacity-60"
+                                    : "text-red-600 cursor-pointer hover:scale-110"
+                            }
+                        `}
+                        onClick={() => {
+                            if (items.length <= 1) return; // evita eliminar la última variante
+                            onChange(removeVariant(items, variant.id));
+                        }}
                     ></i>
+
                 </div>
             ))}
 
@@ -93,7 +106,7 @@ const ProductVariants = ({ items, onChange, productId }) => {
                 type='button'
                 disabled={newVariant}
                 className={`text-gray-600 dark:text-[#c9c9c9] text-[0.9rem] mb-2 mt-4 px-1.5 py-1 font-medium bg-[#fdfdfd] dark:bg-[#363636] border border-gray-600 dark:border-[#c9c9c9] rounded-md  ${newVariant ? "opacity-50 cursor-not-allowed" : "transition-all ease-linear duration-200 hover:text-[0.95rem] hover:[box-shadow:2px_2px_10px_#00000048] hover:cursor-pointer"}`}
-                onClick={() => setNewVariant({ color: "", stock: 0, imagen: "" })}
+                onClick={() => setNewVariant({ id: productId , color: "", stock: 0, imagen: "" })}
             >
                 Agregar variante
             </button>

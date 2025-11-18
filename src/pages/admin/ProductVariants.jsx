@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { removeVariant, updateVariant } from '../../utils/adminProductHelpers'
+import { toast } from 'react-toastify'
 
-const ProductVariants = ({ items, onChange, productId }) => {
+const ProductVariants = ({ items, onChange, formID }) => {
     const [newVariant, setNewVariant] = useState(null)
 
     const handleVariantChange = (id, key, value) => {
@@ -11,11 +12,50 @@ const ProductVariants = ({ items, onChange, productId }) => {
         onChange(updatedItems)
     }
 
-    const handleSaveNewVariant = () => {
-        if (!newVariant.color) return alert("La variante necesita un color")
-        onChange([...items, { ...newVariant, id: productId + "-" + newVariant.color.toLowerCase() }])
+
+
+    const handleSaveNewVariant = async () => {
+        if (!newVariant.color || newVariant.stock === "" || !newVariant.imagen) {
+            return toast.error("Completa color, stock e imagen antes de guardar")
+        }
+
+        const urlPublica = await handleImageUpload(newVariant.file)
+        const colorId = newVariant.color.trim().toLowerCase().replace(/\s+/g, "-")
+
+        // 4. Guardar la variante usando la URL PUBLICA
+        onChange([
+            ...items,
+            {
+                ...newVariant,
+                imagen: urlPublica,           
+                id: formID + "-" + colorId,
+            }
+        ])
+
+        console.log()
+
         setNewVariant(null)
     }
+
+
+    const handleImageUpload = async(file) => {
+        // 1. Preparar formData
+        const formData = new FormData()
+        formData.append("imgVariante", file)
+
+        // 2. Enviar al backend
+        const res = await fetch("http://localhost:3000/imgs", {
+            method: "POST",
+            body: formData,
+        })
+
+        // 3. traer respuesta de url publica
+        const data = await res.json()
+        const urlPublica = data.url
+
+        return urlPublica
+    }
+
 
     return (
         <fieldset className="flex flex-col items-center gap-2 py-3 sm:px-5 border border-[#d4d4d4] dark:border-[#525252] rounded-lg bg-[#fdfdfd] dark:bg-[#2a2a2a]">
@@ -52,11 +92,16 @@ const ProductVariants = ({ items, onChange, productId }) => {
                             accept="image/*"
                             className="hidden"
                             onChange={(e) => {
-                                const file = e.target.files[0];
-                                if (!file) return;
-                                handleVariantChange(variant.id, "imagen", URL.createObjectURL(file));
+                                const file = e.target.files[0]
+                                if (!file) return
+
+                                // Función async inmediata para subir la imagen
+                                (async () => {
+                                const urlPublica = await handleImageUpload(file) // llamar a la función de subida
+                                handleVariantChange(variant.id, "imagen", urlPublica) // actualizar el estado con la URL pública
+                                })()
                             }}
-                        />
+                            />
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-2 w-full items-center sm:justify-around">
@@ -82,9 +127,20 @@ const ProductVariants = ({ items, onChange, productId }) => {
                     </div>
 
                     <i
-                        className="bi bi-trash text-red-600 text-xl cursor-pointer hover:scale-110 transition-transform"
-                        onClick={() => onChange(removeVariant(items, variant.id))}
+                        className={`
+                            bi bi-trash text-xl transition-transform
+                            ${
+                                items.length <= 1
+                                    ? "text-gray-400 cursor-not-allowed opacity-60"
+                                    : "text-red-600 cursor-pointer hover:scale-110"
+                            }
+                        `}
+                        onClick={() => {
+                            if (items.length <= 1) return // evita eliminar la última variante
+                            onChange(removeVariant(items, variant.id))
+                        }}
                     ></i>
+
                 </div>
             ))}
 
@@ -93,7 +149,7 @@ const ProductVariants = ({ items, onChange, productId }) => {
                 type='button'
                 disabled={newVariant}
                 className={`text-gray-600 dark:text-[#c9c9c9] text-[0.9rem] mb-2 mt-4 px-1.5 py-1 font-medium bg-[#fdfdfd] dark:bg-[#363636] border border-gray-600 dark:border-[#c9c9c9] rounded-md  ${newVariant ? "opacity-50 cursor-not-allowed" : "transition-all ease-linear duration-200 hover:text-[0.95rem] hover:[box-shadow:2px_2px_10px_#00000048] hover:cursor-pointer"}`}
-                onClick={() => setNewVariant({ color: "", stock: 0, imagen: "" })}
+                onClick={() => setNewVariant({ id: formID , color: "", stock: 0, imagen: "" })}
             >
                 Agregar variante
             </button>
@@ -128,7 +184,7 @@ const ProductVariants = ({ items, onChange, productId }) => {
                             onChange={(e) => {
                                 const file = e.target.files[0];
                                 if (!file) return;
-                                setNewVariant({ ...newVariant, imagen: URL.createObjectURL(file) })
+                                setNewVariant({ ...newVariant, file: file, imagen: URL.createObjectURL(file) })
                             }}
                         />
                     </div>
