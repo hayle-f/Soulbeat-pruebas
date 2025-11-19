@@ -31,6 +31,7 @@ export const AdminProductsProvider = ({children}) => {
 
     // CREAR Producto
     const createProduct = async (productData) => {
+        console.log(productData)
         try {
             const { data } = await axios.post(`${BASE_URL}`, productData)
             console.log(data)

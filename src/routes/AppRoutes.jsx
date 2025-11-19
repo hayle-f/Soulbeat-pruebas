@@ -20,7 +20,7 @@ const AppRoutes = () => {
                 <Route path='/products' element={<Products />} />
                 <Route path='/Faqs' element={<FaqsSubscription />} />
                 <Route path='/checkout' element={<Checkout />} />
-                <Route path='/*' element={<Navigate to='/' replace />} />
+                <Route path='*' element={<Navigate to='/' replace />} />
                 </Routes>
             }        
         </main>

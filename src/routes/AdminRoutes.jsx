@@ -12,7 +12,7 @@ const AdminRoutes = () => {
                 <Route path='/admin/products' element={<AdminProducts />} />
                 <Route path='/admin/products/crear' element={<AdminProductForm />} />
                 <Route path='/admin/products/editar/:id' element={<AdminProductForm />} />
-                <Route path='/*' element={<Navigate to='/admin/products' replace />} />
+                <Route path='*' element={<Navigate to='/admin/products' replace />} />
             </Routes>
         </AdminProductsProvider>
     )
