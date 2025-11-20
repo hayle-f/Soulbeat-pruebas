@@ -36,6 +36,6 @@ const AuricularSlider = ({ images }) => {
   );
 };
 
-export default AuricularSlider;
+export default AuricularSlider
 
 

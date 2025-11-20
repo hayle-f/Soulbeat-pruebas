@@ -5,6 +5,7 @@ import Cart from "../../components/Cart"
 import useWishlist from "../../hooks/useWishlist"
 import useOpen from "../../hooks/useOpen" 
 import { Bars } from "react-loader-spinner"
+import { ScrollToTop } from "../../components/ScrollToTop"
 
 const Products = () => {
 
@@ -84,6 +85,8 @@ const Products = () => {
                     )}
                 </div>
             </div>    
+
+            <ScrollToTop />
 
             {/* Modales de favoritos y carrito */}
             <ModalFavs 

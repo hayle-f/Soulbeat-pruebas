@@ -2,6 +2,7 @@ import { Bars } from "react-loader-spinner";
 import { useAurisContext } from "../../context/AurisContext";
 import AdminProductItem from "./AdminProductItem";
 import { useNavigate } from "react-router-dom";
+import { ScrollToTop } from "../../components/ScrollToTop";
 
 
 const AdminProducts = () => {
@@ -49,7 +50,9 @@ const AdminProducts = () => {
                     ))
                     )}
                 </div>
-            </div>    
+            </div>
+
+            <ScrollToTop />    
 
         </>
     )
