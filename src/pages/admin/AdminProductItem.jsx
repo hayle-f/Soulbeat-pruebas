@@ -49,7 +49,7 @@ const AdminProductItem = ({ auricular }) => {
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => setSelectedItem(item)}
+                  onClick={() => setSelectedItem({...auricular, ...item})}
                   className={`w-5 h-5 rounded-full border-1 transition-all hover:cursor-pointer ${
                     isSelected
                       ? "border-black dark:border-white scale-115"
